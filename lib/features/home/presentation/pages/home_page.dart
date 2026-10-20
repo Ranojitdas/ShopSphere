@@ -9,6 +9,7 @@ import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/presentation/cubit/auth_state.dart';
 import '../../../products/presentation/cubit/product_list_cubit.dart';
 import '../../../products/presentation/cubit/product_list_state.dart';
+import '../../../products/presentation/pages/product_details_page.dart';
 import '../../../products/presentation/widgets/category_chips_bar.dart';
 import '../../../products/presentation/widgets/product_card.dart';
 import '../../../products/presentation/widgets/product_grid_shimmer.dart';
@@ -253,7 +254,17 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
                                   final product = state.products[index];
                                   return ProductCard(
                                     product: product,
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => ProductDetailsPage(
+                                            productId: product.id,
+                                            initialProduct: product,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   );
                                 },
                                 childCount: state.products.length,

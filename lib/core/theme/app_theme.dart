@@ -24,6 +24,12 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.backgroundLight,
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (context) => const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          size: 20,
+        ),
+      ),
       appBarTheme: const AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -152,6 +158,12 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.backgroundDark,
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (context) => const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          size: 20,
+        ),
+      ),
       appBarTheme: const AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,

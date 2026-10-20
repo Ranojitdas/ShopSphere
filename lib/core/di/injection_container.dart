@@ -18,6 +18,7 @@ import '../../features/products/domain/usecases/get_product_details_usecase.dart
 import '../../features/products/domain/usecases/get_products_by_category_usecase.dart';
 import '../../features/products/domain/usecases/get_products_usecase.dart';
 import '../../features/products/domain/usecases/search_products_usecase.dart';
+import '../../features/products/presentation/cubit/product_details_cubit.dart';
 import '../../features/products/presentation/cubit/product_list_cubit.dart';
 import '../network/auth_interceptor.dart';
 import '../network/dio_client.dart';
@@ -83,6 +84,12 @@ Future<void> initDependencies() async {
       getCategoriesUseCase: sl(),
       getProductsByCategoryUseCase: sl(),
       searchProductsUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => ProductDetailsCubit(
+      getProductDetailsUseCase: sl(),
     ),
   );
 }
