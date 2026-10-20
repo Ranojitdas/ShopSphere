@@ -82,6 +82,7 @@ Future<void> initDependencies() async {
       getProductsUseCase: sl(),
       getCategoriesUseCase: sl(),
       getProductsByCategoryUseCase: sl(),
+      searchProductsUseCase: sl(),
     ),
   );
 }

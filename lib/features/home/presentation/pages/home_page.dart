@@ -12,6 +12,7 @@ import '../../../products/presentation/cubit/product_list_state.dart';
 import '../../../products/presentation/widgets/category_chips_bar.dart';
 import '../../../products/presentation/widgets/product_card.dart';
 import '../../../products/presentation/widgets/product_grid_shimmer.dart';
+import '../../../products/presentation/widgets/product_search_bar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -41,6 +42,7 @@ class _HomeCatalogView extends StatefulWidget {
 
 class _HomeCatalogViewState extends State<_HomeCatalogView> {
   final _scrollController = ScrollController();
+  final _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -52,6 +54,7 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -60,6 +63,11 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
         _scrollController.position.maxScrollExtent - 250) {
       context.read<ProductListCubit>().loadMoreProducts();
     }
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    context.read<ProductListCubit>().clearSearch();
   }
 
   void _showSortBottomSheet(BuildContext context) {
@@ -113,6 +121,7 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final crossAxisCount = context.isCompact
         ? 2
         : (context.isMedium ? 3 : 4);
@@ -142,14 +151,49 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
 
           return Column(
             children: [
-              if (state.categories.isNotEmpty) ...[
-                const SizedBox(height: 8),
+              ProductSearchBar(
+                controller: _searchController,
+                hasQuery: state.isSearching || _searchController.text.isNotEmpty,
+                onChanged: (val) => cubit.onSearchQueryChanged(val),
+                onClear: _clearSearch,
+              ),
+              if (state.isSearching) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Search: "${state.searchQuery}" (${state.total} results)',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: _clearSearch,
+                        child: Text(
+                          'Clear',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.error,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else if (state.categories.isNotEmpty) ...[
+                const SizedBox(height: 4),
                 CategoryChipsBar(
                   categories: state.categories,
                   selectedCategory: state.selectedCategory,
-                  onCategorySelected: (slug) => cubit.selectCategory(slug),
+                  onCategorySelected: (slug) {
+                    _searchController.clear();
+                    cubit.selectCategory(slug);
+                  },
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
               ],
               Expanded(
                 child: Builder(
@@ -166,6 +210,17 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
                     }
 
                     if (state.isEmpty) {
+                      if (state.isSearching) {
+                        return AppEmptyView(
+                          title: 'No Matching Products',
+                          subtitle: 'We couldn\'t find any items matching "${state.searchQuery}". Try a different keyword.',
+                          action: OutlinedButton(
+                            onPressed: _clearSearch,
+                            child: const Text('Clear Search'),
+                          ),
+                        );
+                      }
+
                       return AppEmptyView(
                         title: 'No Products Found',
                         subtitle: 'No items found in this category.',

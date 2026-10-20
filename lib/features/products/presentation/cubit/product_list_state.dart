@@ -61,6 +61,7 @@ class ProductListState extends Equatable {
   final List<ProductEntity> products;
   final List<CategoryEntity> categories;
   final String? selectedCategory;
+  final String searchQuery;
   final ProductSortOption sortOption;
   final bool hasMore;
   final bool isLoadingMore;
@@ -73,6 +74,7 @@ class ProductListState extends Equatable {
     this.products = const [],
     this.categories = const [],
     this.selectedCategory,
+    this.searchQuery = '',
     this.sortOption = ProductSortOption.defaultSort,
     this.hasMore = true,
     this.isLoadingMore = false,
@@ -85,12 +87,14 @@ class ProductListState extends Equatable {
   bool get isSuccess => status == ProductListStatus.success;
   bool get isFailure => status == ProductListStatus.failure && products.isEmpty;
   bool get isEmpty => status == ProductListStatus.success && products.isEmpty;
+  bool get isSearching => searchQuery.isNotEmpty;
 
   ProductListState copyWith({
     ProductListStatus? status,
     List<ProductEntity>? products,
     List<CategoryEntity>? categories,
     String? Function()? selectedCategory,
+    String? Function()? searchQuery,
     ProductSortOption? sortOption,
     bool? hasMore,
     bool? isLoadingMore,
@@ -103,6 +107,7 @@ class ProductListState extends Equatable {
       products: products ?? this.products,
       categories: categories ?? this.categories,
       selectedCategory: selectedCategory != null ? selectedCategory() : this.selectedCategory,
+      searchQuery: searchQuery != null ? (searchQuery() ?? '') : this.searchQuery,
       sortOption: sortOption ?? this.sortOption,
       hasMore: hasMore ?? this.hasMore,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
@@ -118,6 +123,7 @@ class ProductListState extends Equatable {
         products,
         categories,
         selectedCategory,
+        searchQuery,
         sortOption,
         hasMore,
         isLoadingMore,
