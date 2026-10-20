@@ -6,8 +6,10 @@ import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/check_auth_status_usecase.dart';
+import '../../features/auth/domain/usecases/get_current_user_usecase.dart';
 import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/domain/usecases/logout_usecase.dart';
+import '../../features/auth/presentation/cubit/auth_cubit.dart';
 import '../network/auth_interceptor.dart';
 import '../network/dio_client.dart';
 
@@ -40,5 +42,15 @@ Future<void> initDependencies() async {
 
   sl.registerLazySingleton(() => LoginUseCase(sl()));
   sl.registerLazySingleton(() => CheckAuthStatusUseCase(sl()));
+  sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
+
+  sl.registerFactory(
+    () => AuthCubit(
+      loginUseCase: sl(),
+      checkAuthStatusUseCase: sl(),
+      getCurrentUserUseCase: sl(),
+      logoutUseCase: sl(),
+    ),
+  );
 }
