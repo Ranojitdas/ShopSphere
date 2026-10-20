@@ -14,6 +14,9 @@ class ApiEndpoints {
   static const String productCategories = '/products/categories';
   static const String categoryProducts = '/products/category';
 
+  static String productDetails(int id) => '/products/$id';
+  static String productsByCategory(String category) => '/products/category/$category';
+
   static const String addCart = '/carts/add';
   static const String userCarts = '/carts/user';
 
