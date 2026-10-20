@@ -6,6 +6,7 @@ import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/splash_page.dart';
 import 'features/cart/presentation/cubit/cart_cubit.dart';
+import 'features/cart/presentation/pages/cart_page.dart';
 import 'features/home/presentation/pages/home_page.dart';
 
 void main() async {
@@ -39,6 +40,7 @@ class ShopSphereApp extends StatelessWidget {
           '/splash': (context) => const SplashPage(),
           '/login': (context) => const LoginPage(),
           '/home': (context) => const HomePage(),
+          '/cart': (context) => const CartPage(),
         },
       ),
     );
