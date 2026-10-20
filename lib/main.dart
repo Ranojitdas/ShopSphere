@@ -5,6 +5,7 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/splash_page.dart';
+import 'features/cart/presentation/cubit/cart_cubit.dart';
 import 'features/home/presentation/pages/home_page.dart';
 
 void main() async {
@@ -18,8 +19,15 @@ class ShopSphereApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<AuthCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthCubit>(
+          create: (_) => sl<AuthCubit>(),
+        ),
+        BlocProvider<CartCubit>(
+          create: (_) => sl<CartCubit>()..loadCart(),
+        ),
+      ],
       child: MaterialApp(
         title: 'ShopSphere',
         debugShowCheckedModeBanner: false,
