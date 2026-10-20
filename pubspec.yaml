@@ -1,0 +1,32 @@
+name: shopsphere
+description: "A e-commerce catalog application built with Flutter and Clean Architecture."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # State Management
+  flutter_bloc: ^9.0.0
+  equatable: ^2.0.7
+
+  # Core Networking & Functional Error Handling
+  dio: ^5.8.0
+  dartz: ^0.10.1
+
+  # Service Locator (Dependency Injection)
+  get_it: ^8.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
