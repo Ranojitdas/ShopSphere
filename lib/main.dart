@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'core/theme/app_theme.dart';
 
-/// Entry point of the ShopSphere application.
 void main() {
-  // Ensure that Flutter widget binding is properly initialized before running the app.
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const ShopSphereApp());
 }
 
-/// Root widget of the application.
-/// Configures high-level app settings, themes, and navigation.
 class ShopSphereApp extends StatelessWidget {
   const ShopSphereApp({super.key});
 
@@ -17,10 +14,9 @@ class ShopSphereApp extends StatelessWidget {
     return MaterialApp(
       title: 'ShopSphere',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4F46E5)),
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       home: const Scaffold(
         body: Center(
           child: Text(
