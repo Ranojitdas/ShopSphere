@@ -197,7 +197,7 @@ class _CheckoutViewState extends State<_CheckoutView> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '742 Evergreen Terrace, Springfield, OR 97477',
+                          '626 Main Street, Phoenix, MS 29112',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -237,7 +237,7 @@ class _CheckoutViewState extends State<_CheckoutView> {
                             ? null
                             : (val) => setState(() => _selectedPaymentMethod = val!),
                         title: const Text('Credit / Debit Card'),
-                        subtitle: const Text('Visa, Mastercard, Amex (Mocked)'),
+                        subtitle: const Text('Visa, Mastercard, American Express'),
                         secondary: const Icon(Icons.credit_card_outlined),
                       ),
                       const Divider(height: 1),

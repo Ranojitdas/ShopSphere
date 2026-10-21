@@ -128,11 +128,12 @@ class _ProductDetailsView extends StatelessWidget {
                     ],
                   ),
                 )
-              : Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1100),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
+              : SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1100),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -143,17 +144,14 @@ class _ProductDetailsView extends StatelessWidget {
                               onPageChanged: (index) => cubit.selectImage(index),
                             ),
                           ),
-                          const SizedBox(width: 32),
+                          const SizedBox(width: 36),
                           Expanded(
                             flex: 6,
-                            child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: _buildDetailsContent(
-                                context,
-                                product,
-                                hasDiscount,
-                                isOutOfStock,
-                              ),
+                            child: _buildDetailsContent(
+                              context,
+                              product,
+                              hasDiscount,
+                              isOutOfStock,
                             ),
                           ),
                         ],
@@ -400,7 +398,7 @@ class _ProductDetailsView extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
@@ -410,98 +408,107 @@ class _ProductDetailsView extends StatelessWidget {
         ),
       ),
       child: SafeArea(
-        child: Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color:
-                      theme.colorScheme.outlineVariant.withValues(alpha: 0.6),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.remove_rounded, size: 18),
-                    visualDensity: VisualDensity.compact,
-                    constraints:
-                        const BoxConstraints(minWidth: 36, minHeight: 36),
-                    onPressed: isOutOfStock || state.quantity <= 1
-                        ? null
-                        : () => cubit.decrementQuantity(),
+        top: false,
+        child: SizedBox(
+          height: 48,
+          child: Row(
+            children: [
+              Container(
+                height: 44,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color:
+                        theme.colorScheme.outlineVariant.withValues(alpha: 0.6),
                   ),
-                  Container(
-                    constraints: const BoxConstraints(minWidth: 24),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${state.quantity}',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.remove_rounded, size: 18),
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints:
+                          const BoxConstraints(minWidth: 36, minHeight: 36),
+                      onPressed: isOutOfStock || state.quantity <= 1
+                          ? null
+                          : () => cubit.decrementQuantity(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        '${state.quantity}',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.add_rounded, size: 18),
-                    visualDensity: VisualDensity.compact,
-                    constraints:
-                        const BoxConstraints(minWidth: 36, minHeight: 36),
-                    onPressed: isOutOfStock || state.quantity >= product.stock
+                    IconButton(
+                      icon: const Icon(Icons.add_rounded, size: 18),
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints:
+                          const BoxConstraints(minWidth: 36, minHeight: 36),
+                      onPressed: isOutOfStock || state.quantity >= product.stock
+                          ? null
+                          : () => cubit.incrementQuantity(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: SizedBox(
+                  height: 44,
+                  child: FilledButton.icon(
+                    onPressed: isOutOfStock
                         ? null
-                        : () => cubit.incrementQuantity(),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: FilledButton.icon(
-                onPressed: isOutOfStock
-                    ? null
-                    : () {
-                        final cartItem = CartItemEntity(
-                          productId: product.id,
-                          title: product.title,
-                          price: product.price,
-                          discountPercentage: product.discountPercentage,
-                          quantity: state.quantity,
-                          stock: product.stock,
-                          thumbnail: product.thumbnail,
-                        );
-                        context.read<CartCubit>().addToCart(cartItem);
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Added ${state.quantity} ${state.quantity == 1 ? 'item' : 'items'} to cart',
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            action: SnackBarAction(
-                              label: 'View Cart',
-                              onPressed: () =>
-                                  Navigator.pushNamed(context, '/cart'),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        );
-                      },
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                        : () {
+                            final cartItem = CartItemEntity(
+                              productId: product.id,
+                              title: product.title,
+                              price: product.price,
+                              discountPercentage: product.discountPercentage,
+                              quantity: state.quantity,
+                              stock: product.stock,
+                              thumbnail: product.thumbnail,
+                            );
+                            context.read<CartCubit>().addToCart(cartItem);
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Added ${state.quantity} ${state.quantity == 1 ? 'item' : 'items'} to cart',
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                                action: SnackBarAction(
+                                  label: 'View Cart',
+                                  onPressed: () =>
+                                      Navigator.pushNamed(context, '/cart'),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            );
+                          },
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.shopping_cart_outlined, size: 20),
+                    label: Text(
+                      isOutOfStock ? 'Out of Stock' : 'Add to Cart',
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                    ),
                   ),
                 ),
-                icon: const Icon(Icons.shopping_cart_outlined, size: 20),
-                label: Text(
-                  isOutOfStock ? 'Out of Stock' : 'Add to Cart',
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

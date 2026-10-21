@@ -277,7 +277,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           title: const Text('My Orders'),
                           subtitle: const Text('View past and active orders'),
                           trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                          onTap: () => Navigator.pushNamed(context, '/cart'),
+                          onTap: () => _showOrdersModal(context),
                         ),
                         const Divider(height: 1),
                         ListTile(
@@ -286,7 +286,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             color: theme.colorScheme.primary,
                           ),
                           title: const Text('Saved Address'),
-                          subtitle: const Text('742 Evergreen Terrace, Springfield'),
+                          subtitle: const Text('626 Main Street, Phoenix, MS 29112'),
                           trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                           onTap: () {},
                         ),
@@ -299,14 +299,16 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         const ListTile(
                           leading: Icon(Icons.info_outline_rounded),
-                          title: Text('ShopSphere Version'),
-                          subtitle: Text('1.0.0 • Clean Architecture'),
+                          title: Text('Version'),
+                          subtitle: Text('1.0.0 (Build 1)'),
                         ),
                         const Divider(height: 1),
-                        const ListTile(
-                          leading: Icon(Icons.api_rounded),
-                          title: Text('Backend Data Source'),
-                          subtitle: Text('DummyJSON Public REST API'),
+                        ListTile(
+                          leading: const Icon(Icons.privacy_tip_outlined),
+                          title: const Text('Privacy & Terms'),
+                          subtitle: const Text('Standard Consumer Terms'),
+                          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                          onTap: () {},
                         ),
                       ],
                     ),
@@ -467,6 +469,143 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showOrdersModal(BuildContext context) {
+    final theme = Theme.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: theme.colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (bottomSheetContext) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.paddingOf(bottomSheetContext).bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          Icons.receipt_long_rounded,
+                          color: theme.colorScheme.primary,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'My Orders',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () => Navigator.pop(bottomSheetContext),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Order #ORD-2026-1042',
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            'CONFIRMED',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Standard 2-3 Day Delivery • Tracking: TRK-92841',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const Divider(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Order Total',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        Text(
+                          '\$149.99',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(bottomSheetContext),
+                  child: const Text('Close'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
