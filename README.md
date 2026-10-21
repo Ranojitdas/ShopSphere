@@ -10,7 +10,7 @@
 ShopSphere is a Flutter shopping catalog that demonstrates clean software engineering principles. The app is structured feature-first using Clean Architecture (Presentation, Domain, Data, Core) with BLoC/Cubit for predictable state management. It includes an adaptive layout for phones and tablets, persistent local cart storage, defensive error handling, token-based session management, and a complete unit test suite.
 
 - **Android Release APK:** [Download ShopSphere_Ranojit_Das_v1.0.0.apk](https://github.com/Ranojitdas/ShopSphere/releases/tag/v1.0.0) *(or see `build/app/outputs/flutter-apk/app-release.apk`)*
-- **Demo Video Walkthrough:** [Google Drive Video Link](https://drive.google.com/) *(Walking through auth, catalog, search, cart, responsive layout, and simulated error states)*
+- **Demo Video Walkthrough:** [Google Drive Deliverables Link](https://drive.google.com/drive/folders/1BfdE2pF7qNCuyRNMwA6VQ-LE-ktfXIqW?usp=sharing) *(Walking through auth, catalog, search, cart, responsive layout, and simulated error states)*
 - **GitHub Repository:** [https://github.com/Ranojitdas/ShopSphere](https://github.com/Ranojitdas/ShopSphere)
 
 ---
