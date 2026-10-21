@@ -1,0 +1,32 @@
+{
+  "id": 1,
+  "title": "Essence Mascara Lash Princess",
+  "description": "The Essence Mascara Lash Princess is a popular mascara known for its volumizing effect.",
+  "category": "beauty",
+  "price": 9.99,
+  "discountPercentage": 7.17,
+  "rating": 4.94,
+  "stock": 5,
+  "tags": ["beauty", "mascara"],
+  "brand": "Essence",
+  "sku": "RCH45Q1A",
+  "weight": 2.0,
+  "warrantyInformation": "1 month warranty",
+  "shippingInformation": "Ships in 1 month",
+  "availabilityStatus": "Low Stock",
+  "reviews": [
+    {
+      "rating": 5,
+      "comment": "Very happy with the results!",
+      "date": "2024-05-23T08:56:21.618Z",
+      "reviewerName": "John Doe",
+      "reviewerEmail": "john.doe@x.dummyjson.com"
+    }
+  ],
+  "returnPolicy": "30 days return policy",
+  "minimumOrderQuantity": 24,
+  "images": [
+    "https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/1.png"
+  ],
+  "thumbnail": "https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/thumbnail.png"
+}
