@@ -9,7 +9,7 @@ import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/presentation/cubit/auth_state.dart';
 import '../../../cart/presentation/pages/cart_page.dart';
-import '../../../cart/presentation/widgets/cart_app_bar_badge.dart';
+import '../../../../core/theme/theme_cubit.dart';
 import '../../../products/presentation/cubit/product_list_cubit.dart';
 import '../../../products/presentation/cubit/product_list_state.dart';
 import '../../../products/presentation/pages/product_details_page.dart';
@@ -160,24 +160,71 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          context.isCompact ? 'ShopSphere' : 'Product Catalog',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.sort_rounded),
-            tooltip: 'Sort Options',
-            onPressed: () => _showSortBottomSheet(context),
-          ),
-          if (context.isCompact) ...[
-            const CartAppBarBadge(),
-            IconButton(
-              icon: const Icon(Icons.person_outline_rounded),
-              tooltip: 'My Profile',
-              onPressed: () => Navigator.pushNamed(context, '/profile'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.shopping_bag_rounded,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'ShopSphere',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+              ),
             ),
           ],
+        ),
+        actions: [
+          BlocBuilder<ProductListCubit, ProductListState>(
+            buildWhen: (previous, current) =>
+                previous.sortOption != current.sortOption,
+            builder: (context, state) {
+              final isSorted =
+                  state.sortOption != ProductSortOption.defaultSort;
+              return IconButton(
+                icon: Badge(
+                  isLabelVisible: isSorted,
+                  smallSize: 8,
+                  backgroundColor: theme.colorScheme.primary,
+                  child: const Icon(Icons.tune_rounded),
+                ),
+                tooltip: isSorted
+                    ? 'Sort: ${state.sortOption.label}'
+                    : 'Sort Options',
+                onPressed: () => _showSortBottomSheet(context),
+              );
+            },
+          ),
+          BlocBuilder<ThemeCubit, ThemeMode>(
+            builder: (context, mode) {
+              final isDark = mode == ThemeMode.dark ||
+                  (mode == ThemeMode.system &&
+                      MediaQuery.platformBrightnessOf(context) ==
+                          Brightness.dark);
+              return IconButton(
+                tooltip:
+                    isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+                icon: Icon(
+                  isDark
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                ),
+                onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+              );
+            },
+          ),
+          const SizedBox(width: 4),
         ],
       ),
       body: BlocBuilder<ProductListCubit, ProductListState>(

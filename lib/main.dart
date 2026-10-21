@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/di/injection_container.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_cubit.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/splash_page.dart';
@@ -24,6 +25,9 @@ class ShopSphereApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ThemeCubit>(
+          create: (_) => sl<ThemeCubit>(),
+        ),
         BlocProvider<AuthCubit>(
           create: (_) => sl<AuthCubit>(),
         ),
@@ -31,20 +35,24 @@ class ShopSphereApp extends StatelessWidget {
           create: (_) => sl<CartCubit>()..loadCart(),
         ),
       ],
-      child: MaterialApp(
-        title: 'ShopSphere',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        initialRoute: '/splash',
-        routes: {
-          '/splash': (context) => const SplashPage(),
-          '/login': (context) => const LoginPage(),
-          '/home': (context) => const HomePage(),
-          '/cart': (context) => const CartPage(),
-          '/checkout': (context) => const CheckoutPage(),
-          '/profile': (context) => const ProfilePage(),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            title: 'ShopSphere',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+            initialRoute: '/splash',
+            routes: {
+              '/splash': (context) => const SplashPage(),
+              '/login': (context) => const LoginPage(),
+              '/home': (context) => const HomePage(),
+              '/cart': (context) => const CartPage(),
+              '/checkout': (context) => const CheckoutPage(),
+              '/profile': (context) => const ProfilePage(),
+            },
+          );
         },
       ),
     );

@@ -131,6 +131,42 @@ class AppTheme {
           color: Colors.white,
         ),
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        height: 62,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        indicatorColor: colorScheme.primary.withValues(alpha: 0.12),
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return IconThemeData(
+              color: colorScheme.primary,
+              size: 22,
+            );
+          }
+          return IconThemeData(
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
+            size: 22,
+          );
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: colorScheme.primary,
+            );
+          }
+          return TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
+          );
+        }),
+      ),
       dividerTheme: const DividerThemeData(
         color: AppColors.borderLight,
         thickness: 1,
@@ -264,6 +300,42 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: AppColors.backgroundDark,
         ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        height: 62,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        indicatorColor: colorScheme.primary.withValues(alpha: 0.16),
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return IconThemeData(
+              color: colorScheme.primary,
+              size: 22,
+            );
+          }
+          return IconThemeData(
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
+            size: 22,
+          );
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: colorScheme.primary,
+            );
+          }
+          return TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
+          );
+        }),
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.borderDark,

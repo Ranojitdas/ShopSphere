@@ -415,26 +415,38 @@ class _ProductDetailsView extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: theme.colorScheme.outlineVariant.withValues(alpha: 0.6),
+                  color:
+                      theme.colorScheme.outlineVariant.withValues(alpha: 0.6),
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.remove_rounded, size: 18),
+                    visualDensity: VisualDensity.compact,
+                    constraints:
+                        const BoxConstraints(minWidth: 36, minHeight: 36),
                     onPressed: isOutOfStock || state.quantity <= 1
                         ? null
                         : () => cubit.decrementQuantity(),
                   ),
-                  Text(
-                    '${state.quantity}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  Container(
+                    constraints: const BoxConstraints(minWidth: 24),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${state.quantity}',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.add_rounded, size: 18),
+                    visualDensity: VisualDensity.compact,
+                    constraints:
+                        const BoxConstraints(minWidth: 36, minHeight: 36),
                     onPressed: isOutOfStock || state.quantity >= product.stock
                         ? null
                         : () => cubit.incrementQuantity(),

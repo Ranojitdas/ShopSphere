@@ -5,6 +5,7 @@ import '../../../auth/domain/entities/user_entity.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/presentation/cubit/auth_state.dart';
 import '../../../cart/presentation/cubit/cart_cubit.dart';
+import '../../../../core/theme/theme_cubit.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool isEmbedded;
@@ -86,6 +87,26 @@ class _ProfilePageState extends State<ProfilePage> {
             'My Profile',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
+          actions: [
+            BlocBuilder<ThemeCubit, ThemeMode>(
+              builder: (context, mode) {
+                final isDark = mode == ThemeMode.dark ||
+                    (mode == ThemeMode.system &&
+                        MediaQuery.platformBrightnessOf(context) ==
+                            Brightness.dark);
+                return IconButton(
+                  tooltip:
+                      isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+                  icon: Icon(
+                    isDark
+                        ? Icons.light_mode_rounded
+                        : Icons.dark_mode_rounded,
+                  ),
+                  onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+                );
+              },
+            ),
+          ],
         ),
         body: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
@@ -158,6 +179,96 @@ class _ProfilePageState extends State<ProfilePage> {
                       theme,
                       title: 'Account & Preferences',
                       children: [
+                        BlocBuilder<ThemeCubit, ThemeMode>(
+                          builder: (context, currentMode) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    currentMode == ThemeMode.dark
+                                        ? Icons.dark_mode_rounded
+                                        : (currentMode == ThemeMode.light
+                                            ? Icons.light_mode_rounded
+                                            : Icons.brightness_auto_rounded),
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Appearance',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        Text(
+                                          currentMode == ThemeMode.dark
+                                              ? 'Dark theme'
+                                              : (currentMode == ThemeMode.light
+                                                  ? 'Light theme'
+                                                  : 'System default'),
+                                          style: theme.textTheme.bodySmall
+                                              ?.copyWith(
+                                            color: theme.colorScheme.onSurface
+                                                .withValues(alpha: 0.6),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SegmentedButton<ThemeMode>(
+                                    segments: const [
+                                      ButtonSegment<ThemeMode>(
+                                        value: ThemeMode.light,
+                                        icon: Icon(
+                                          Icons.light_mode_rounded,
+                                          size: 16,
+                                        ),
+                                        tooltip: 'Light theme',
+                                      ),
+                                      ButtonSegment<ThemeMode>(
+                                        value: ThemeMode.system,
+                                        icon: Icon(
+                                          Icons.brightness_auto_rounded,
+                                          size: 16,
+                                        ),
+                                        tooltip: 'System theme',
+                                      ),
+                                      ButtonSegment<ThemeMode>(
+                                        value: ThemeMode.dark,
+                                        icon: Icon(
+                                          Icons.dark_mode_rounded,
+                                          size: 16,
+                                        ),
+                                        tooltip: 'Dark theme',
+                                      ),
+                                    ],
+                                    selected: {currentMode},
+                                    onSelectionChanged: (selected) {
+                                      context
+                                          .read<ThemeCubit>()
+                                          .setThemeMode(selected.first);
+                                    },
+                                    showSelectedIcon: false,
+                                    style: const ButtonStyle(
+                                      visualDensity: VisualDensity.compact,
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                        const Divider(height: 1),
                         ListTile(
                           leading: Icon(
                             Icons.receipt_long_outlined,

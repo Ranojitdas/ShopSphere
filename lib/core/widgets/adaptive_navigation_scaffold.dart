@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
 import '../../features/cart/presentation/cubit/cart_cubit.dart';
 import '../../features/cart/presentation/cubit/cart_state.dart';
+import '../theme/theme_cubit.dart';
 import '../utils/responsive_layout.dart';
 
 class AdaptiveNavigationScaffold extends StatelessWidget {
@@ -71,34 +72,47 @@ class AdaptiveNavigationScaffold extends StatelessWidget {
               index: currentIndex,
               children: children,
             ),
-            bottomNavigationBar: NavigationBar(
-              selectedIndex: currentIndex,
-              onDestinationSelected: onNavigationChanged,
-              destinations: [
-                const NavigationDestination(
-                  icon: Icon(Icons.storefront_outlined),
-                  selectedIcon: Icon(Icons.storefront_rounded),
-                  label: 'Catalog',
-                ),
-                NavigationDestination(
-                  icon: Badge(
-                    isLabelVisible: cartCount > 0,
-                    label: Text('$cartCount'),
-                    child: const Icon(Icons.shopping_bag_outlined),
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: theme.colorScheme.outlineVariant
+                        .withValues(alpha: 0.35),
+                    width: 0.8,
                   ),
-                  selectedIcon: Badge(
-                    isLabelVisible: cartCount > 0,
-                    label: Text('$cartCount'),
-                    child: const Icon(Icons.shopping_bag_rounded),
+                ),
+              ),
+              child: NavigationBar(
+                selectedIndex: currentIndex,
+                onDestinationSelected: onNavigationChanged,
+                destinations: [
+                  const NavigationDestination(
+                    icon: Icon(Icons.storefront_outlined, size: 22),
+                    selectedIcon: Icon(Icons.storefront_rounded, size: 22),
+                    label: 'Catalog',
                   ),
-                  label: 'Cart',
-                ),
-                const NavigationDestination(
-                  icon: Icon(Icons.person_outline_rounded),
-                  selectedIcon: Icon(Icons.person_rounded),
-                  label: 'Profile',
-                ),
-              ],
+                  NavigationDestination(
+                    icon: Badge(
+                      isLabelVisible: cartCount > 0,
+                      label: Text('$cartCount'),
+                      child:
+                          const Icon(Icons.shopping_bag_outlined, size: 22),
+                    ),
+                    selectedIcon: Badge(
+                      isLabelVisible: cartCount > 0,
+                      label: Text('$cartCount'),
+                      child: const Icon(Icons.shopping_bag_rounded, size: 22),
+                    ),
+                    label: 'Cart',
+                  ),
+                  const NavigationDestination(
+                    icon: Icon(Icons.person_outline_rounded, size: 22),
+                    selectedIcon: Icon(Icons.person_rounded, size: 22),
+                    label: 'Profile',
+                  ),
+                ],
+              ),
             ),
           );
         }
@@ -148,11 +162,37 @@ class AdaptiveNavigationScaffold extends StatelessWidget {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 20),
-                      child: IconButton(
-                        icon: const Icon(Icons.logout_rounded),
-                        tooltip: 'Sign Out',
-                        color: theme.colorScheme.error,
-                        onPressed: () => _showSignOutDialog(context),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          BlocBuilder<ThemeCubit, ThemeMode>(
+                            builder: (context, mode) {
+                              final isDark = mode == ThemeMode.dark ||
+                                  (mode == ThemeMode.system &&
+                                      MediaQuery.platformBrightnessOf(context) ==
+                                          Brightness.dark);
+                              return IconButton(
+                                icon: Icon(
+                                  isDark
+                                      ? Icons.light_mode_rounded
+                                      : Icons.dark_mode_rounded,
+                                ),
+                                tooltip: isDark
+                                    ? 'Switch to Light Mode'
+                                    : 'Switch to Dark Mode',
+                                onPressed: () =>
+                                    context.read<ThemeCubit>().toggleTheme(),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                          IconButton(
+                            icon: const Icon(Icons.logout_rounded),
+                            tooltip: 'Sign Out',
+                            color: theme.colorScheme.error,
+                            onPressed: () => _showSignOutDialog(context),
+                          ),
+                        ],
                       ),
                     ),
                   ),
