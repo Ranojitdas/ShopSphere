@@ -3,14 +3,20 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/cart_entity.dart';
 import '../../domain/entities/cart_item_entity.dart';
+import '../../domain/entities/order_entity.dart';
 import '../../domain/repositories/cart_repository.dart';
 import '../datasources/cart_local_data_source.dart';
+import '../datasources/cart_remote_data_source.dart';
 import '../models/cart_model.dart';
 
 class CartRepositoryImpl implements CartRepository {
   final CartLocalDataSource localDataSource;
+  final CartRemoteDataSource remoteDataSource;
 
-  CartRepositoryImpl({required this.localDataSource});
+  CartRepositoryImpl({
+    required this.localDataSource,
+    required this.remoteDataSource,
+  });
 
   @override
   Future<Either<Failure, CartEntity>> getCart() async {
@@ -29,11 +35,13 @@ class CartRepositoryImpl implements CartRepository {
     try {
       final currentCart = await localDataSource.getCart();
       final items = List<CartItemEntity>.from(currentCart.items);
-      final index = items.indexWhere((element) => element.productId == item.productId);
+      final index =
+          items.indexWhere((element) => element.productId == item.productId);
 
       if (index >= 0) {
         final existingItem = items[index];
-        final newQuantity = (existingItem.quantity + item.quantity).clamp(1, item.stock);
+        final newQuantity =
+            (existingItem.quantity + item.quantity).clamp(1, item.stock);
         items[index] = existingItem.copyWith(quantity: newQuantity);
       } else {
         final clampedQuantity = item.quantity.clamp(1, item.stock);
@@ -58,7 +66,8 @@ class CartRepositoryImpl implements CartRepository {
     try {
       final currentCart = await localDataSource.getCart();
       final items = List<CartItemEntity>.from(currentCart.items);
-      final index = items.indexWhere((element) => element.productId == productId);
+      final index =
+          items.indexWhere((element) => element.productId == productId);
 
       if (index >= 0) {
         if (quantity <= 0) {
@@ -107,6 +116,27 @@ class CartRepositoryImpl implements CartRepository {
       return Left(CacheFailure(e.message));
     } catch (_) {
       return const Left(CacheFailure('Failed to clear cart'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, OrderEntity>> placeOrder({
+    required int userId,
+    required List<CartItemEntity> items,
+  }) async {
+    try {
+      final order = await remoteDataSource.placeOrder(
+        userId: userId,
+        items: items,
+      );
+      await localDataSource.clearCart();
+      return Right(order);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return const Left(ServerFailure('Failed to place order.'));
     }
   }
 }
