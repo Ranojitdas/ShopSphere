@@ -49,6 +49,10 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Future<void> updateQuantity(int productId, int quantity) async {
+    if (quantity <= 0) {
+      await removeFromCart(productId);
+      return;
+    }
     final result = await updateCartQuantityUseCase(productId, quantity);
     result.fold(
       (failure) => emit(CartError(failure.message)),

@@ -153,10 +153,12 @@ class CartPage extends StatelessWidget {
                                       item.productId,
                                       item.quantity + 1,
                                     ),
-                                    onDecrement: () => cubit.updateQuantity(
-                                      item.productId,
-                                      item.quantity - 1,
-                                    ),
+                                    onDecrement: () => item.quantity > 1
+                                        ? cubit.updateQuantity(
+                                            item.productId,
+                                            item.quantity - 1,
+                                          )
+                                        : cubit.removeFromCart(item.productId),
                                     onRemove: () =>
                                         cubit.removeFromCart(item.productId),
                                   );
@@ -186,10 +188,12 @@ class CartPage extends StatelessWidget {
                                       item.productId,
                                       item.quantity + 1,
                                     ),
-                                    onDecrement: () => cubit.updateQuantity(
-                                      item.productId,
-                                      item.quantity - 1,
-                                    ),
+                                    onDecrement: () => item.quantity > 1
+                                        ? cubit.updateQuantity(
+                                            item.productId,
+                                            item.quantity - 1,
+                                          )
+                                        : cubit.removeFromCart(item.productId),
                                     onRemove: () =>
                                         cubit.removeFromCart(item.productId),
                                   );
