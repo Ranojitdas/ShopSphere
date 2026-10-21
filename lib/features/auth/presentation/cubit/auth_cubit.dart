@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/check_auth_status_usecase.dart';
+import '../../domain/usecases/fetch_user_profile_usecase.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
@@ -9,12 +10,14 @@ class AuthCubit extends Cubit<AuthState> {
   final LoginUseCase loginUseCase;
   final CheckAuthStatusUseCase checkAuthStatusUseCase;
   final GetCurrentUserUseCase getCurrentUserUseCase;
+  final FetchUserProfileUseCase fetchUserProfileUseCase;
   final LogoutUseCase logoutUseCase;
 
   AuthCubit({
     required this.loginUseCase,
     required this.checkAuthStatusUseCase,
     required this.getCurrentUserUseCase,
+    required this.fetchUserProfileUseCase,
     required this.logoutUseCase,
   }) : super(const AuthInitial());
 
@@ -33,6 +36,22 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.fold(
       (failure) => emit(const Unauthenticated()),
+      (user) => emit(Authenticated(user)),
+    );
+  }
+
+  Future<void> refreshProfile() async {
+    final result = await fetchUserProfileUseCase();
+    if (isClosed) return;
+
+    result.fold(
+      (failure) {
+        if (failure.message.contains('401') ||
+            failure.message.contains('session') ||
+            failure.message.contains('token')) {
+          emit(const Unauthenticated());
+        }
+      },
       (user) => emit(Authenticated(user)),
     );
   }

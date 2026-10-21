@@ -69,6 +69,26 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, UserEntity>> fetchUserProfile() async {
+    try {
+      final token = await localDataSource.getAccessToken();
+      if (token == null || token.isEmpty) {
+        return const Left(AuthFailure('No active session.'));
+      }
+
+      final user = await remoteDataSource.getCurrentUser(token);
+      await localDataSource.saveUser(user);
+      return Right(user);
+    } on DioException catch (e) {
+      return Left(mapDioExceptionToFailure(e));
+    } on CacheException catch (e) {
+      return Left(CacheFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> logout() async {
     try {
       await localDataSource.clearSession();
