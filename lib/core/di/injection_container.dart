@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/auth/data/datasources/auth_local_data_source.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
@@ -10,6 +11,18 @@ import '../../features/auth/domain/usecases/get_current_user_usecase.dart';
 import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/domain/usecases/logout_usecase.dart';
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
+import '../../features/cart/data/datasources/cart_local_data_source.dart';
+import '../../features/cart/data/datasources/cart_remote_data_source.dart';
+import '../../features/cart/data/repositories/cart_repository_impl.dart';
+import '../../features/cart/domain/repositories/cart_repository.dart';
+import '../../features/cart/domain/usecases/add_to_cart_usecase.dart';
+import '../../features/cart/domain/usecases/clear_cart_usecase.dart';
+import '../../features/cart/domain/usecases/get_cart_usecase.dart';
+import '../../features/cart/domain/usecases/place_order_usecase.dart';
+import '../../features/cart/domain/usecases/remove_from_cart_usecase.dart';
+import '../../features/cart/domain/usecases/update_cart_quantity_usecase.dart';
+import '../../features/cart/presentation/cubit/cart_cubit.dart';
+import '../../features/cart/presentation/cubit/checkout_cubit.dart';
 import '../../features/products/data/datasources/product_remote_data_source.dart';
 import '../../features/products/data/repositories/product_repository_impl.dart';
 import '../../features/products/domain/repositories/product_repository.dart';
@@ -26,6 +39,9 @@ import '../network/dio_client.dart';
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+
   const secureStorage = FlutterSecureStorage();
   sl.registerLazySingleton<FlutterSecureStorage>(() => secureStorage);
 
@@ -90,6 +106,44 @@ Future<void> initDependencies() async {
   sl.registerFactory(
     () => ProductDetailsCubit(
       getProductDetailsUseCase: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton<CartLocalDataSource>(
+    () => CartLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+
+  sl.registerLazySingleton<CartRemoteDataSource>(
+    () => CartRemoteDataSourceImpl(dio: sl()),
+  );
+
+  sl.registerLazySingleton<CartRepository>(
+    () => CartRepositoryImpl(
+      localDataSource: sl(),
+      remoteDataSource: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton(() => GetCartUseCase(sl()));
+  sl.registerLazySingleton(() => AddToCartUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateCartQuantityUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveFromCartUseCase(sl()));
+  sl.registerLazySingleton(() => ClearCartUseCase(sl()));
+  sl.registerLazySingleton(() => PlaceOrderUseCase(sl()));
+
+  sl.registerLazySingleton(
+    () => CartCubit(
+      getCartUseCase: sl(),
+      addToCartUseCase: sl(),
+      updateCartQuantityUseCase: sl(),
+      removeFromCartUseCase: sl(),
+      clearCartUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => CheckoutCubit(
+      placeOrderUseCase: sl(),
     ),
   );
 }

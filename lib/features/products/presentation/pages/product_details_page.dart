@@ -7,6 +7,9 @@ import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../domain/entities/product_entity.dart';
+import '../../../cart/domain/entities/cart_item_entity.dart';
+import '../../../cart/presentation/cubit/cart_cubit.dart';
+import '../../../cart/presentation/widgets/cart_app_bar_badge.dart';
 import '../cubit/product_details_cubit.dart';
 import '../cubit/product_details_state.dart';
 import '../widgets/product_image_carousel.dart';
@@ -43,7 +46,13 @@ class _ProductDetailsView extends StatelessWidget {
 
         if (state.isNotFound) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Product Details')),
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: const Text('Product Details'),
+            ),
             body: AppEmptyView(
               icon: Icons.search_off_rounded,
               title: 'Product Not Found',
@@ -58,7 +67,13 @@ class _ProductDetailsView extends StatelessWidget {
 
         if (state.isFailure && state.product == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Product Details')),
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: const Text('Product Details'),
+            ),
             body: AppErrorView(
               message: state.errorMessage ?? 'Failed to load product details.',
               onRetry: () => cubit.loadProductDetails(cubit.state.product?.id ?? 0),
@@ -80,12 +95,19 @@ class _ProductDetailsView extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              onPressed: () => Navigator.pop(context),
+            ),
             title: Text(
               product.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
+            actions: const [
+              CartAppBarBadge(),
+            ],
           ),
           bottomNavigationBar: _buildBottomBar(context, state, cubit, product, isOutOfStock),
           body: context.isCompact
@@ -426,12 +448,28 @@ class _ProductDetailsView extends StatelessWidget {
                 onPressed: isOutOfStock
                     ? null
                     : () {
+                        final cartItem = CartItemEntity(
+                          productId: product.id,
+                          title: product.title,
+                          price: product.price,
+                          discountPercentage: product.discountPercentage,
+                          quantity: state.quantity,
+                          stock: product.stock,
+                          thumbnail: product.thumbnail,
+                        );
+                        context.read<CartCubit>().addToCart(cartItem);
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
                               'Added ${state.quantity} ${state.quantity == 1 ? 'item' : 'items'} to cart',
                             ),
                             behavior: SnackBarBehavior.floating,
+                            action: SnackBarAction(
+                              label: 'View Cart',
+                              onPressed: () =>
+                                  Navigator.pushNamed(context, '/cart'),
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),

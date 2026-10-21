@@ -10,6 +10,7 @@ import '../../../auth/presentation/cubit/auth_state.dart';
 import '../../../products/presentation/cubit/product_list_cubit.dart';
 import '../../../products/presentation/cubit/product_list_state.dart';
 import '../../../products/presentation/pages/product_details_page.dart';
+import '../../../cart/presentation/widgets/cart_app_bar_badge.dart';
 import '../../../products/presentation/widgets/category_chips_bar.dart';
 import '../../../products/presentation/widgets/product_card.dart';
 import '../../../products/presentation/widgets/product_grid_shimmer.dart';
@@ -139,6 +140,7 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
             tooltip: 'Sort Options',
             onPressed: () => _showSortBottomSheet(context),
           ),
+          const CartAppBarBadge(),
           IconButton(
             icon: const Icon(Icons.logout_rounded),
             tooltip: 'Sign Out',
