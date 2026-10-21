@@ -1,7 +1,7 @@
 # ShopSphere
 
-> **A lightweight, production-quality Flutter e-commerce catalog application built with Clean Architecture, consuming the [DummyJSON API](https://dummyjson.com).**  
-> Developed for the **Prosessed Flutter Developer Intern Technical Assignment** (October 2026).
+> **A lightweight, Flutter e-commerce catalog application built with Clean Architecture, consuming the [DummyJSON API](https://dummyjson.com).**  
+> Developed for the **Prosessed Flutter Developer Intern Technical Assignment**.
 
 ---
 
