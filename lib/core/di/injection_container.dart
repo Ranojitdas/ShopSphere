@@ -36,12 +36,14 @@ import '../../features/products/presentation/cubit/product_details_cubit.dart';
 import '../../features/products/presentation/cubit/product_list_cubit.dart';
 import '../network/auth_interceptor.dart';
 import '../network/dio_client.dart';
+import '../theme/theme_cubit.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit(sharedPreferences: sl()));
 
   const secureStorage = FlutterSecureStorage();
   sl.registerLazySingleton<FlutterSecureStorage>(() => secureStorage);

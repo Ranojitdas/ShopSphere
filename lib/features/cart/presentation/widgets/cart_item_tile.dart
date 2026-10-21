@@ -142,7 +142,7 @@ class CartItemTile extends StatelessWidget {
                               borderRadius: const BorderRadius.horizontal(
                                 left: Radius.circular(9),
                               ),
-                              onTap: onDecrement,
+                              onTap: item.quantity > 1 ? onDecrement : onRemove,
                               child: Padding(
                                 padding: const EdgeInsets.all(6.0),
                                 child: Icon(

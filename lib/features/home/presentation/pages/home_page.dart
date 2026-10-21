@@ -2,22 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/utils/responsive_layout.dart';
+import '../../../../core/widgets/adaptive_navigation_scaffold.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/presentation/cubit/auth_state.dart';
+import '../../../cart/presentation/pages/cart_page.dart';
+import '../../../../core/theme/theme_cubit.dart';
 import '../../../products/presentation/cubit/product_list_cubit.dart';
 import '../../../products/presentation/cubit/product_list_state.dart';
 import '../../../products/presentation/pages/product_details_page.dart';
-import '../../../cart/presentation/widgets/cart_app_bar_badge.dart';
 import '../../../products/presentation/widgets/category_chips_bar.dart';
 import '../../../products/presentation/widgets/product_card.dart';
 import '../../../products/presentation/widgets/product_grid_shimmer.dart';
 import '../../../products/presentation/widgets/product_search_bar.dart';
+import '../../../profile/presentation/pages/profile_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentTab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +39,26 @@ class HomePage extends StatelessWidget {
       },
       child: BlocProvider(
         create: (_) => sl<ProductListCubit>()..loadInitialCatalog(),
-        child: const _HomeCatalogView(),
+        child: AdaptiveNavigationScaffold(
+          currentIndex: _currentTab,
+          onNavigationChanged: (index) {
+            setState(() {
+              _currentTab = index;
+            });
+          },
+          children: [
+            const _HomeCatalogView(),
+            CartPage(
+              isEmbedded: true,
+              onContinueShopping: () {
+                setState(() {
+                  _currentTab = 0;
+                });
+              },
+            ),
+            const ProfilePage(isEmbedded: true),
+          ],
+        ),
       ),
     );
   }
@@ -130,22 +159,72 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'ShopSphere',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.shopping_bag_rounded,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'ShopSphere',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+              ),
+            ),
+          ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.sort_rounded),
-            tooltip: 'Sort Options',
-            onPressed: () => _showSortBottomSheet(context),
+          BlocBuilder<ProductListCubit, ProductListState>(
+            buildWhen: (previous, current) =>
+                previous.sortOption != current.sortOption,
+            builder: (context, state) {
+              final isSorted =
+                  state.sortOption != ProductSortOption.defaultSort;
+              return IconButton(
+                icon: Badge(
+                  isLabelVisible: isSorted,
+                  smallSize: 8,
+                  backgroundColor: theme.colorScheme.primary,
+                  child: const Icon(Icons.tune_rounded),
+                ),
+                tooltip: isSorted
+                    ? 'Sort: ${state.sortOption.label}'
+                    : 'Sort Options',
+                onPressed: () => _showSortBottomSheet(context),
+              );
+            },
           ),
-          const CartAppBarBadge(),
-          IconButton(
-            icon: const Icon(Icons.person_outline_rounded),
-            tooltip: 'My Profile',
-            onPressed: () => Navigator.pushNamed(context, '/profile'),
+          BlocBuilder<ThemeCubit, ThemeMode>(
+            builder: (context, mode) {
+              final isDark = mode == ThemeMode.dark ||
+                  (mode == ThemeMode.system &&
+                      MediaQuery.platformBrightnessOf(context) ==
+                          Brightness.dark);
+              return IconButton(
+                tooltip:
+                    isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+                icon: Icon(
+                  isDark
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                ),
+                onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+              );
+            },
           ),
+          const SizedBox(width: 4),
         ],
       ),
       body: BlocBuilder<ProductListCubit, ProductListState>(

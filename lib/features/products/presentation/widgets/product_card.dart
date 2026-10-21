@@ -38,19 +38,23 @@ class ProductCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Hero(
-                    tag: 'product-image-${product.id}',
-                    child: CachedNetworkImage(
-                      imageUrl: product.thumbnail,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Shimmer.fromColors(
-                        baseColor: theme.colorScheme.surfaceContainerHighest,
-                        highlightColor: theme.colorScheme.surface,
-                        child: Container(color: Colors.white),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        child: const Icon(Icons.broken_image_rounded, size: 36),
+                  Container(
+                    color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.25),
+                    padding: const EdgeInsets.all(8),
+                    child: Hero(
+                      tag: 'product-image-${product.id}',
+                      child: CachedNetworkImage(
+                        imageUrl: product.thumbnail,
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: theme.colorScheme.surfaceContainerHighest,
+                          highlightColor: theme.colorScheme.surface,
+                          child: Container(color: Colors.white),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          child: const Icon(Icons.broken_image_rounded, size: 36),
+                        ),
                       ),
                     ),
                   ),
@@ -60,19 +64,24 @@ class ProductCard extends StatelessWidget {
                       left: 8,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                          horizontal: 7,
+                          vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.error,
-                          borderRadius: BorderRadius.circular(8),
+                          color: theme.colorScheme.errorContainer,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: theme.colorScheme.error.withValues(alpha: 0.2),
+                            width: 0.5,
+                          ),
                         ),
                         child: Text(
                           '-${product.discountPercentage.round()}%',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: theme.colorScheme.onErrorContainer,
                             fontSize: 11,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.2,
                           ),
                         ),
                       ),
@@ -81,14 +90,24 @@ class ProductCard extends StatelessWidget {
                     Positioned.fill(
                       child: Container(
                         color: Colors.black.withValues(alpha: 0.55),
-                        child: const Center(
-                          child: Text(
-                            'OUT OF STOCK',
-                            style: TextStyle(
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
                               color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'OUT OF STOCK',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.8,
+                              ),
                             ),
                           ),
                         ),
@@ -116,16 +135,33 @@ class ProductCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Icon(
-                        Icons.star_rounded,
-                        color: AppColors.starFilled,
-                        size: 15,
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        product.rating.toStringAsFixed(1),
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.starFilled.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              color: AppColors.starFilled,
+                              size: 13,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              product.rating.toStringAsFixed(1),
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

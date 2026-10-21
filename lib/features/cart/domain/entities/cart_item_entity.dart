@@ -28,6 +28,10 @@ class CartItemEntity extends Equatable {
 
   double get itemDiscountSavings => itemTotal - itemDiscountedTotal;
 
+  bool get canDecrement => quantity > 1;
+
+  bool get canIncrement => quantity < stock;
+
   CartItemEntity copyWith({
     int? productId,
     String? title,
@@ -37,13 +41,19 @@ class CartItemEntity extends Equatable {
     int? stock,
     String? thumbnail,
   }) {
+    final effectiveStock = stock ?? this.stock;
+    final targetQuantity = quantity ?? this.quantity;
+    final safeQuantity = targetQuantity < 1
+        ? 1
+        : (targetQuantity > effectiveStock ? effectiveStock : targetQuantity);
+
     return CartItemEntity(
       productId: productId ?? this.productId,
       title: title ?? this.title,
       price: price ?? this.price,
       discountPercentage: discountPercentage ?? this.discountPercentage,
-      quantity: quantity ?? this.quantity,
-      stock: stock ?? this.stock,
+      quantity: safeQuantity,
+      stock: effectiveStock,
       thumbnail: thumbnail ?? this.thumbnail,
     );
   }
