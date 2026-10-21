@@ -9,6 +9,7 @@ import 'features/cart/presentation/cubit/cart_cubit.dart';
 import 'features/cart/presentation/pages/cart_page.dart';
 import 'features/cart/presentation/pages/checkout_page.dart';
 import 'features/home/presentation/pages/home_page.dart';
+import 'features/profile/presentation/pages/profile_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +44,7 @@ class ShopSphereApp extends StatelessWidget {
           '/home': (context) => const HomePage(),
           '/cart': (context) => const CartPage(),
           '/checkout': (context) => const CheckoutPage(),
+          '/profile': (context) => const ProfilePage(),
         },
       ),
     );

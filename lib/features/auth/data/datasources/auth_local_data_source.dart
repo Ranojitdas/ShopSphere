@@ -15,6 +15,8 @@ abstract class AuthLocalDataSource {
     required String refreshToken,
   });
 
+  Future<void> saveUser(UserModel user);
+
   Future<String?> getAccessToken();
   Future<String?> getRefreshToken();
   Future<UserModel?> getSavedUser();
@@ -54,6 +56,15 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     try {
       await secureStorage.write(key: _accessTokenKey, value: accessToken);
       await secureStorage.write(key: _refreshTokenKey, value: refreshToken);
+    } catch (e) {
+      throw CacheException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> saveUser(UserModel user) async {
+    try {
+      await secureStorage.write(key: _userKey, value: jsonEncode(user.toJson()));
     } catch (e) {
       throw CacheException(e.toString());
     }

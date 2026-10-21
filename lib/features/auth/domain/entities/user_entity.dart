@@ -8,6 +8,7 @@ class UserEntity extends Equatable {
   final String lastName;
   final String gender;
   final String image;
+  final String? phone;
 
   const UserEntity({
     required this.id,
@@ -17,6 +18,7 @@ class UserEntity extends Equatable {
     required this.lastName,
     required this.gender,
     required this.image,
+    this.phone,
   });
 
   String get fullName => '$firstName $lastName'.trim();
@@ -36,5 +38,6 @@ class UserEntity extends Equatable {
         lastName,
         gender,
         image,
+        phone,
       ];
 }

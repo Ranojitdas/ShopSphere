@@ -142,9 +142,9 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
           ),
           const CartAppBarBadge(),
           IconButton(
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: 'Sign Out',
-            onPressed: () => context.read<AuthCubit>().logout(),
+            icon: const Icon(Icons.person_outline_rounded),
+            tooltip: 'My Profile',
+            onPressed: () => Navigator.pushNamed(context, '/profile'),
           ),
         ],
       ),
