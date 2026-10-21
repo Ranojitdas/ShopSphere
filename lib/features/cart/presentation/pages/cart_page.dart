@@ -9,7 +9,14 @@ import '../widgets/cart_item_tile.dart';
 import '../widgets/cart_summary_card.dart';
 
 class CartPage extends StatelessWidget {
-  const CartPage({super.key});
+  final bool isEmbedded;
+  final VoidCallback? onContinueShopping;
+
+  const CartPage({
+    super.key,
+    this.isEmbedded = false,
+    this.onContinueShopping,
+  });
 
   void _showClearCartDialog(BuildContext context) {
     showDialog(
@@ -80,10 +87,13 @@ class CartPage extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
-              onPressed: () => Navigator.pop(context),
-            ),
+            automaticallyImplyLeading: false,
+            leading: isEmbedded
+                ? null
+                : IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                    onPressed: () => Navigator.pop(context),
+                  ),
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -122,7 +132,9 @@ class CartPage extends StatelessWidget {
                       action: FilledButton.icon(
                         icon: const Icon(Icons.storefront_outlined),
                         label: const Text('Start Shopping'),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: isEmbedded && onContinueShopping != null
+                            ? onContinueShopping
+                            : () => Navigator.pop(context),
                       ),
                     )
                   : context.isCompact

@@ -2,22 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/utils/responsive_layout.dart';
+import '../../../../core/widgets/adaptive_navigation_scaffold.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/presentation/cubit/auth_state.dart';
+import '../../../cart/presentation/pages/cart_page.dart';
+import '../../../cart/presentation/widgets/cart_app_bar_badge.dart';
 import '../../../products/presentation/cubit/product_list_cubit.dart';
 import '../../../products/presentation/cubit/product_list_state.dart';
 import '../../../products/presentation/pages/product_details_page.dart';
-import '../../../cart/presentation/widgets/cart_app_bar_badge.dart';
 import '../../../products/presentation/widgets/category_chips_bar.dart';
 import '../../../products/presentation/widgets/product_card.dart';
 import '../../../products/presentation/widgets/product_grid_shimmer.dart';
 import '../../../products/presentation/widgets/product_search_bar.dart';
+import '../../../profile/presentation/pages/profile_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentTab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +39,26 @@ class HomePage extends StatelessWidget {
       },
       child: BlocProvider(
         create: (_) => sl<ProductListCubit>()..loadInitialCatalog(),
-        child: const _HomeCatalogView(),
+        child: AdaptiveNavigationScaffold(
+          currentIndex: _currentTab,
+          onNavigationChanged: (index) {
+            setState(() {
+              _currentTab = index;
+            });
+          },
+          children: [
+            const _HomeCatalogView(),
+            CartPage(
+              isEmbedded: true,
+              onContinueShopping: () {
+                setState(() {
+                  _currentTab = 0;
+                });
+              },
+            ),
+            const ProfilePage(isEmbedded: true),
+          ],
+        ),
       ),
     );
   }
@@ -130,9 +159,10 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'ShopSphere',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        automaticallyImplyLeading: false,
+        title: Text(
+          context.isCompact ? 'ShopSphere' : 'Product Catalog',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -140,12 +170,14 @@ class _HomeCatalogViewState extends State<_HomeCatalogView> {
             tooltip: 'Sort Options',
             onPressed: () => _showSortBottomSheet(context),
           ),
-          const CartAppBarBadge(),
-          IconButton(
-            icon: const Icon(Icons.person_outline_rounded),
-            tooltip: 'My Profile',
-            onPressed: () => Navigator.pushNamed(context, '/profile'),
-          ),
+          if (context.isCompact) ...[
+            const CartAppBarBadge(),
+            IconButton(
+              icon: const Icon(Icons.person_outline_rounded),
+              tooltip: 'My Profile',
+              onPressed: () => Navigator.pushNamed(context, '/profile'),
+            ),
+          ],
         ],
       ),
       body: BlocBuilder<ProductListCubit, ProductListState>(

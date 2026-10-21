@@ -7,7 +7,12 @@ import '../../../auth/presentation/cubit/auth_state.dart';
 import '../../../cart/presentation/cubit/cart_cubit.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final bool isEmbedded;
+
+  const ProfilePage({
+    super.key,
+    this.isEmbedded = false,
+  });
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -70,10 +75,13 @@ class _ProfilePageState extends State<ProfilePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () => Navigator.pop(context),
-          ),
+          automaticallyImplyLeading: false,
+          leading: widget.isEmbedded
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                  onPressed: () => Navigator.pop(context),
+                ),
           title: const Text(
             'My Profile',
             style: TextStyle(fontWeight: FontWeight.bold),
